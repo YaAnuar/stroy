@@ -46,7 +46,7 @@ async def add_employee(request: Request, session: AsyncSession = Depends(get_ses
         return empl
 
 
-@router.patch("/update_employee_by_id/{empl_id}")
+@router.patch("/update_employee/{empl_id}")
 async def update_employee_by_id(empl_id: int, request: Request,
                                             session: AsyncSession = Depends(get_session)):
     res = await session.execute(select(Employee).where(Employee.id == empl_id))

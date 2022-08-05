@@ -46,7 +46,7 @@ async def add_person(request: Request, session: AsyncSession = Depends(get_sessi
         return pers 
 
 
-@router.patch("/update_person_by_id/{person_id}")
+@router.patch("/update_person/{person_id}")
 async def update_person_by_id(person_id: int, person: PersonUpdate, request: Request,
                                             session: AsyncSession = Depends(get_session)):
     req = await request.json()
