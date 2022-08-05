@@ -1,6 +1,5 @@
 from app.models import Optional, SQLModel, Field, Relationship
 from app.models import date
-from app.models import CRUDRouter
 
 class PersonBase(SQLModel):
     first_name: str
@@ -18,13 +17,5 @@ class PersonCreate(PersonBase):
     pass
 
 
-class PersonRead(PersonBase):
-    id: int
-
-
 class PersonUpdate(SQLModel):
     address: Optional[str] = None
-
-
-class PersonReadWithEmployee(PersonRead):
-    employee: Optional[PersonRead] = None

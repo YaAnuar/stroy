@@ -1,5 +1,5 @@
 from app.models import Optional, SQLModel, Field, Relationship
-from app.models import CRUDRouter, date, Column, List, Integer
+from app.models import Column, List, Integer
 
 
 class DepartmentBase(SQLModel):
@@ -17,13 +17,7 @@ class DepartmentCreate(DepartmentBase):
     pass
 
 
-class DepartmentRead(DepartmentBase):
-    id: int
-
-
 class DepartmentUpdate(SQLModel):
+    name: str = None
+    id_organisation: int = None
     description: Optional[str] = None
-
-
-class DepartmentReadWithEmployees(DepartmentRead):
-    team: Optional[DepartmentRead] = None
