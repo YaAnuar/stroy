@@ -4,7 +4,7 @@ from app.models import Column, List, Integer
 
 def Department_validate(req):
     return DepartmentBase.validate({"first_name": req['name'], "last_name": req['id_organisation'], 
-                                    "birthday": req['description']})
+                                    "description": req['description']})
 
 
 class DepartmentBase(SQLModel):
