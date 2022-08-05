@@ -42,18 +42,24 @@ async def add_person(request: Request, session: AsyncSession = Depends(get_sessi
 
         return pers 
 
-@router.patch("/update_person/{person_id}", status_code=200)
-async def update_person(person_id: int, person: PersonUpdate, request: Request,
+
+@router.patch("/update_person/{person_id}")
+async def update_department(person_id: int, person: PersonUpdate, request: Request,
                                             session: AsyncSession = Depends(get_session)):
     req = await request.json()
-    exists = await session.execute(select(Person).where(Person.id == person_id))
+    res = await session.execute(select(Person).where(Person.id == person_id))
+    exists = res.scalars().all()
     if not exists:
-        raise HTTPException(status_code=404, detail="Person not found")
+        raise HTTPException(status_code=404, detail="Employee not found")
     else:
-        res = await session.execute("UPDATE person SET address = '{0}' WHERE id = {1}"
-                                                    .format(req['address'], person_id))
-        await session.commit()
-        return 'OK'
+        try:
+            Person_validate(req)
+        except ValidationError as e:
+            res = await session.execute("UPDATE person SET first_name = '{0}', last_name = '{1}', birthday = '{3}', address = '{4}'  WHERE id = {1} CASCADE"
+                                                        .format(req['first_name'], req['last_name'], req['birthday'], req['address'], person_id))
+            await session.commit()
+            return 'OK'
+
 
 
 @router.delete("/delete_person/{person_id}")
