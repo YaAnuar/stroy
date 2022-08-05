@@ -44,7 +44,7 @@ async def add_employee(request: Request, session: AsyncSession = Depends(get_ses
 @router.patch("/update_employee/{empl_id}")
 async def update_employee(empl_id: int, request: Request,
                                             session: AsyncSession = Depends(get_session)):
-    res = await session.execute(select(Employee).where/(Employee.id == empl_id))
+    res = await session.execute(select(Employee).where(Employee.id == empl_id))
     exists = res.scalars().all()
     if not exists:
         raise HTTPException(status_code=404, detail="Employee not found")
