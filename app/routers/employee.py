@@ -1,6 +1,6 @@
 from app.routers import AsyncSession, get_session, select, Depends, selectinload, Request, APIRouter
 from app.routers import HTTPException
-from app.models.employee import Employee, EmployeeCreate, EmployeeUpdate, EmployeeReadAll
+from app.models.employee import EmployeeBase, Employee, EmployeeCreate, EmployeeUpdate, EmployeeReadAll, EmployeeBase_validate
 
 
 router = APIRouter(
@@ -11,8 +11,7 @@ router = APIRouter(
 @router.get("/employees/", response_model=list[EmployeeReadAll])
 async def get_list_employees(session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(Employee).options(selectinload('*')))
-    empls = result.scalars().all()
-
+    empls = result.scalars().all()   
     return empls
 
 
@@ -24,16 +23,23 @@ async def get_employee_by_id(empl_id: int, session: AsyncSession = Depends(get_s
     return empls
 
 
-@router.post("/employees/")
-async def add_employee(empl: EmployeeCreate, session: AsyncSession = Depends(get_session)):
-    empl = Employee(tab=empl.tab, 
-                    id_person=empl.id_person, 
-                    id_department=empl.id_department) 
-    session.add(empl)
-    await session.commit()
-    await session.refresh(empl)
 
-    return empl
+@router.post("/employees/")
+async def add_employee(request: Request, session: AsyncSession = Depends(get_session)):
+    req = await request.json()
+    try:
+        EmployeeBase_validate(req)
+    except Exception as e:
+        return  HTTPException(status_code=400, detail="Incorrect value: " + str(e))
+    else:
+        empl = Employee(tab=req['tab'], 
+                        id_person=req['id_person'], 
+                        id_department=req['id_department'])
+        session.add(empl)
+        await session.commit()
+        await session.refresh(empl)
+
+        return empl
 
 
 @router.patch("/employees/{empl_id}")
