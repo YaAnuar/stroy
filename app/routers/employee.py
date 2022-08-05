@@ -16,7 +16,7 @@ async def get_list_employees(session: AsyncSession = Depends(get_session)):
     return empls
 
 
-@router.get("/employees/{empl_id}", response_model=list[EmployeeReadAll])
+@router.get("/employee_by_id/{empl_id}", response_model=list[EmployeeReadAll])
 async def get_employee_by_id(empl_id: int, session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(Employee).where(Employee.id == empl_id).options(selectinload('*')))
     empls = result.scalars().all()

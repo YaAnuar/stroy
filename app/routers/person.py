@@ -8,8 +8,16 @@ router = APIRouter(
 )
 
 @router.get("/persons", response_model=list[Person])
-async def get_persons(session: AsyncSession = Depends(get_session)):
+async def get_list_persons(session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(Person))
+    persons = result.scalars().all()
+
+    return persons
+
+
+@router.get("/person_by_id/{id}", response_model=list[Person])
+async def get_person_by_id(id: int, session: AsyncSession = Depends(get_session)):
+    result = await session.execute(select(Person).where(Person.id == id))
     persons = result.scalars().all()
 
     return persons

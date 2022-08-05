@@ -18,6 +18,13 @@ async def get_list_departments(session: AsyncSession = Depends(get_session)):
     return departments
 
 
+@router.get("/department_by_id/{id}", response_model=list[Department])
+async def get_department_by_id(id: int, session: AsyncSession = Depends(get_session)):
+    result = await session.execute(select(Department).where(Department.id == id).options(selectinload('*')))
+    departments = result.scalars().all()
+
+    return departments
+
 @router.post("/departments")
 async def add_department(department: DepartmentCreate, session: AsyncSession = Depends(get_session)):
     res = Department(name=department.name, 
