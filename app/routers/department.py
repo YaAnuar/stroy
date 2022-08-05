@@ -37,7 +37,7 @@ async def add_department(request: Request, session: AsyncSession = Depends(get_s
     except ValidationError as e:
         return  HTTPException(status_code=400, detail="Incorrect values: " + str(e))
     else:
-        dep = Department(tab=req['name'], 
+        dep = Department(name=req['name'], 
                         id_person=req['id_organisation'], 
                         id_department=req['description'])
         session.add(dep)
