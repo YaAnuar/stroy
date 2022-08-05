@@ -28,7 +28,10 @@ async def get_person_by_id(id: int, session: AsyncSession = Depends(get_session)
 async def add_person(request: Request, session: AsyncSession = Depends(get_session)):
     req = await request.json()
     try:
-        Person_validate(req)
+        if {'first_name', 'last_name', 'birthday', 'address'} <= set(req):
+            Person_validate(req)
+        else:
+            return  HTTPException(status_code=400, detail="Missed request value.")
     except ValidationError as e:
         return  HTTPException(status_code=400, detail="Incorrect values: " + str(e))
     else:
@@ -53,13 +56,17 @@ async def update_department(person_id: int, person: PersonUpdate, request: Reque
         raise HTTPException(status_code=404, detail="Employee not found")
     else:
         try:
-            Person_validate(req)
+            if {'first_name', 'last_name', 'birthday', 'address'} <= set(req):
+                Person_validate(req)
+            else:
+                return  HTTPException(status_code=400, detail="Missed request value.")
         except ValidationError as e:
-            res = await session.execute("UPDATE person SET first_name = '{0}', last_name = '{1}', birthday = '{3}', address = '{4}'  WHERE id = {1} CASCADE"
+            return  HTTPException(status_code=400, detail="Incorrect values:")
+        else:
+            res = await session.execute("UPDATE person SET first_name = '{0}', last_name = '{1}', birthday = '{2}', address = '{3}'  WHERE id = {4}"
                                                         .format(req['first_name'], req['last_name'], req['birthday'], req['address'], person_id))
             await session.commit()
             return 'OK'
-
 
 
 @router.delete("/delete_person/{person_id}")
