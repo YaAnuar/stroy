@@ -53,7 +53,7 @@ async def update_department(dep_id: int, employee: DepartmentUpdate, request: Re
         raise HTTPException(status_code=404, detail="Employee not found")
     else:
         res = await session.execute("UPDATE department SET description = '{0}' WHERE id = {1} CASCADE"
-                                                    .format(req['description'], empl_id))
+                                                    .format(req['description'], dep_id))
         await session.commit()
         return 'OK'
 
