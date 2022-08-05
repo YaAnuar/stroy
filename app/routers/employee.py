@@ -1,9 +1,6 @@
 from app.routers import AsyncSession, get_session, select, Depends, selectinload, Request, APIRouter
-from app.routers import HTTPException
-from app.routers import ValidationError
+from app.routers import HTTPException, ValidationError
 from app.models.employee import EmployeeBase, Employee, EmployeeCreate, EmployeeUpdate, EmployeeReadAll, Employee_validate
-
-
 
 router = APIRouter(
     prefix="/api",

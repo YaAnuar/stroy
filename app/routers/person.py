@@ -1,6 +1,6 @@
 from app.routers import AsyncSession, get_session, select, Depends, selectinload, Request, APIRouter, HTTPException
 from app.models.person import Person, PersonCreate, PersonUpdate, Person_validate
-from app.routers import ValidationError
+from app.routers import HTTPException, ValidationError
 
 router = APIRouter(
     prefix="/api",
@@ -57,7 +57,7 @@ async def update_person(person_id: int, person: PersonUpdate, request: Request,
 
 
 @router.delete("/delete_person/{person_id}")
-async def delete_employee(person_id: int, session: AsyncSession = Depends(get_session)):
+async def delete_person(person_id: int, session: AsyncSession = Depends(get_session)):
     await session.execute("DELETE FROM person where id = {}".format(person_id))
     await session.commit()
     return 'OK'
