@@ -35,7 +35,7 @@ async def add_employee(request: Request, session: AsyncSession = Depends(get_ses
         return  HTTPException(status_code=400, detail="Incorrect values: " + str(e))
     else:
         empl = Employee(tab=req['tab'], 
-                        hire_data=req['hire_date'],
+                        hire_date=req['hire_date'],
                         dismissal_date=req['dismissal_date'],
                         id_person=req['id_person'], 
                         id_department=req['id_department'])
@@ -67,7 +67,7 @@ async def update_employee(empl_id: int, request: Request,
                                                 "id_person = '{3}', id_department = '{4}'"
                                                 " WHERE id = {5}"
                                                     .format(req['tab'], req['hire_date'], req['dismissal_date'], 
-                                                req['id_person'], req['id_department'], req['empl_id']))
+                                                req['id_person'], req['id_department'], empl_id))
             await session.commit()
 
             return 'OK'
