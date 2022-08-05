@@ -3,7 +3,7 @@ from app.models import Column, List, Integer
 
 
 def Department_validate(req):
-    return DepartmentBase.validate({"first_name": req['name'], "last_name": req['id_organisation'], 
+    return DepartmentBase.validate({"name": req['name'], "id_organisation": req['id_organisation'], 
                                     "description": req['description']})
 
 
