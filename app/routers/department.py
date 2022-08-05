@@ -63,9 +63,9 @@ async def update_department(dep_id: int, employee: DepartmentUpdate, request: Re
         except ValidationError as e:
             return  HTTPException(status_code=400, detail="Incorrect values:")
         else:
-            await session.execute("UPDATE department SET first_name = '{0}', last_name = '{1}', "
-                                                        "id_organisation = '{2}', description = '{3}'  WHERE id = {4}"
-                                                        .format(req['first_name'], req['last_name'], req['id_organisation'], 
+            await session.execute("UPDATE department SET name = '{0}', id_organisation = '{1}', "
+                                                        "description = '{2}'  WHERE id = {3}"
+                                                        .format(req['name'], req['id_organisation'], 
                                                         req['description'], dep_id))
             await session.commit()
             return 'OK'
