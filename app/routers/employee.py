@@ -42,21 +42,27 @@ async def add_employee(request: Request, session: AsyncSession = Depends(get_ses
 
 
 @router.patch("/update_employee/{empl_id}")
-async def update_employee(empl_id: int, empl: EmployeeUpdate, request: Request,
+async def update_employee(empl_id: int, request: Request,
                                             session: AsyncSession = Depends(get_session)):
-    res = await session.execute(select(Employee))
+    res = await session.execute(select(Employee).where/(Employee.id == empl_id))
     exists = res.scalars().all()
     if not exists:
         raise HTTPException(status_code=404, detail="Employee not found")
     else:
-        res = await session.execute("UPDATE employee SET tab = '{0}', hire_date = '{1}', dismissal_date = '{2}',"
-                                            "id_person = '{3}', id_department = '{4}'"
-                                            " WHERE id = {5}"
-                                            .format(empl.tab, empl.hire_date, empl.dismissal_date, 
-                                            empl.id_person, empl.id_department, empl_id))
-        await session.commit()
+        req = await request.json()
+        try:
+            Employee_validate(req)
+        except ValidationError as e:
+            return  HTTPException(status_code=400, detail="Incorrect values: " + str(e))
+        else:
+            res = await session.execute("UPDATE employee SET tab = '{0}', hire_date = '{1}', dismissal_date = '{2}',"
+                                                "id_person = '{3}', id_department = '{4}'"
+                                                " WHERE id = {5}"
+                                                    .format(req['tab'], req['hire_date'], req['dismissal_date'], 
+                                                req['id_person'], req['id_department'], req['empl_id']))
+            await session.commit()
 
-        return 'OK'
+            return 'OK'
 
 @router.delete("/delete_employee/{empl_id}")
 async def delete_employee(empl_id: int, session: AsyncSession = Depends(get_session)):
