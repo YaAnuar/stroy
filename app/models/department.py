@@ -2,6 +2,11 @@ from app.models import Optional, SQLModel, Field, Relationship
 from app.models import Column, List, Integer
 
 
+def Department_validate(req):
+    return DepartmentBase.validate({"first_name": req['name'], "last_name": req['id_organisation'], 
+                                    "birthday": req['description']})
+
+
 class DepartmentBase(SQLModel):
     name: str
     id_organisation: int = Field(sa_column=Column("id_organisation", Integer, unique=True))

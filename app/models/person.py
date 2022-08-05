@@ -1,6 +1,12 @@
 from app.models import Optional, SQLModel, Field, Relationship
 from app.models import date
 
+
+def Person_validate(req):
+    return PersonBase.validate({"first_name": req['first_name'], "last_name": req['last_name'], 
+                                    "birthday": req['birthday'], "address": req['address']})
+
+
 class PersonBase(SQLModel):
     first_name: str
     last_name: str

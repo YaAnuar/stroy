@@ -1,6 +1,7 @@
 from app.routers import AsyncSession, get_session, select, Depends, selectinload, Request, APIRouter
 from app.routers import HTTPException
-from app.models.employee import EmployeeBase, Employee, EmployeeCreate, EmployeeUpdate, EmployeeReadAll, EmployeeBase_validate
+from app.models.employee import EmployeeBase, Employee, EmployeeCreate, EmployeeUpdate, EmployeeReadAll
+from pydantic import ValidationError
 
 
 router = APIRouter(
@@ -28,9 +29,10 @@ async def get_employee_by_id(empl_id: int, session: AsyncSession = Depends(get_s
 async def add_employee(request: Request, session: AsyncSession = Depends(get_session)):
     req = await request.json()
     try:
-        EmployeeBase_validate(req)
-    except Exception as e:
-        return  HTTPException(status_code=400, detail="Incorrect value: " + str(e))
+        EmployeeBase.validate({"id_person": req['id_person'], "id_department": req['id_department'], 
+                                        "tab": req['tab'], "hire_date": req['hire_date'], "dismissal_date": req['dismissal_date']})
+    except ValidationError as e:
+        return  HTTPException(status_code=404, detail="Incorrect value: " + str(e))
     else:
         empl = Employee(tab=req['tab'], 
                         id_person=req['id_person'], 
