@@ -55,7 +55,7 @@ async def update_employee(empl_id: int, request: Request,
         except ValidationError as e:
             return  HTTPException(status_code=400, detail="Incorrect values: " + str(e))
         else:
-            res = await session.execute("UPDATE employee SET tab = '{0}', hire_date = '{1}', dismissal_date = '{2}',"
+            await session.execute("UPDATE employee SET tab = '{0}', hire_date = '{1}', dismissal_date = '{2}',"
                                                 "id_person = '{3}', id_department = '{4}'"
                                                 " WHERE id = {5}"
                                                     .format(req['tab'], req['hire_date'], req['dismissal_date'], 
