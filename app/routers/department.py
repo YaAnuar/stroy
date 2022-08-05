@@ -52,10 +52,13 @@ async def update_department(dep_id: int, employee: DepartmentUpdate, request: Re
     if not exists:
         raise HTTPException(status_code=404, detail="Employee not found")
     else:
-        res = await session.execute("UPDATE department SET first_name = '{0}', last_name = '{1}', id_organisation = '{3}', description = '{2}'  WHERE id = {1} CASCADE"
-                                                    .format(req['description'], dep_id))
-        await session.commit()
-        return 'OK'
+        try:
+            Department_validate(req)
+        except ValidationError as e:
+            res = await session.execute("UPDATE department SET first_name = '{0}', last_name = '{1}', id_organisation = '{3}', description = '{4}'  WHERE id = {1} CASCADE"
+                                                        .format(req['first_name'], req['last_name'], req['id_organisation'], req['description'], dep_id))
+            await session.commit()
+            return 'OK'
 
 
 @router.delete("/delete_department/{dep_id}")
