@@ -47,7 +47,7 @@ async def add_department(request: Request, session: AsyncSession = Depends(get_s
         return dep
 
 @router.patch("/update_department/{dep_id}")
-async def update_department(dep_id: int, employee: DepartmentUpdate, request: Request,
+async def update_department(dep_id: int, request: Request,
                                             session: AsyncSession = Depends(get_session)):
     req = await request.json()
     res = await session.execute(select(Department).where(Department.id == dep_id))
@@ -61,7 +61,7 @@ async def update_department(dep_id: int, employee: DepartmentUpdate, request: Re
             else:
                 return  HTTPException(status_code=400, detail="Missed request value.")
         except ValidationError as e:
-            return  HTTPException(status_code=400, detail="Incorrect values:")
+            return  HTTPException(status_code=400, detail="Incorrect values: " + str(e))
         else:
             await session.execute("UPDATE department SET name = '{0}', id_organisation = '{1}', "
                                                         "description = '{2}'  WHERE id = {3}"
