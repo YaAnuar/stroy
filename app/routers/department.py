@@ -30,7 +30,10 @@ async def get_department_by_id(id: int, session: AsyncSession = Depends(get_sess
 async def add_department(request: Request, session: AsyncSession = Depends(get_session)):
     req = await request.json()
     try:
-        Department_validate(req)
+        if {'name', 'id_organisation', 'description'} <= set(req):
+            Department_validate(req)
+        else:
+            return  HTTPException(status_code=400, detail="Missed request value.")
     except ValidationError as e:
         return  HTTPException(status_code=400, detail="Incorrect values: " + str(e))
     else:
@@ -53,7 +56,7 @@ async def update_department(dep_id: int, employee: DepartmentUpdate, request: Re
         raise HTTPException(status_code=404, detail="Employee not found")
     else:
         try:
-            if {'first_name', 'last_name', 'id_organisation', 'description'} <= set(req):
+            if {'name', 'id_organisation', 'description'} <= set(req):
                 Department_validate(req)
             else:
                 return  HTTPException(status_code=400, detail="Missed request value.")
