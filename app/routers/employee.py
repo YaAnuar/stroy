@@ -1,7 +1,8 @@
 from app.routers import AsyncSession, get_session, select, Depends, selectinload, Request, APIRouter
 from app.routers import HTTPException
+from app.routers import ValidationError
 from app.models.employee import EmployeeBase, Employee, EmployeeCreate, EmployeeUpdate, EmployeeReadAll, Employee_validate
-from pydantic import ValidationError
+
 
 
 router = APIRouter(
@@ -31,7 +32,7 @@ async def add_employee(request: Request, session: AsyncSession = Depends(get_ses
     try:
         Employee_validate(req)
     except ValidationError as e:
-        return  HTTPException(status_code=400, detail="Incorrect value: " + str(e))
+        return  HTTPException(status_code=400, detail="Incorrect values: " + str(e))
     else:
         empl = Employee(tab=req['tab'], 
                         id_person=req['id_person'], 

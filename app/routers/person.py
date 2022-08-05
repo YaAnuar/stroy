@@ -1,5 +1,6 @@
 from app.routers import AsyncSession, get_session, select, Depends, selectinload, Request, APIRouter, HTTPException
-from app.models.person import Person, PersonCreate, PersonUpdate
+from app.models.person import Person, PersonCreate, PersonUpdate, Person_validate
+from app.routers import ValidationError
 
 router = APIRouter(
     prefix="/api",
@@ -24,16 +25,22 @@ async def get_person_by_id(id: int, session: AsyncSession = Depends(get_session)
 
 
 @router.post("/persons")
-async def add_person(person: PersonCreate, session: AsyncSession = Depends(get_session)):
-    res = Person(first_name=person.first_name, 
-                    last_name=person.last_name, 
-                    birthday=person.birthday,
-                    address=person.address) 
-    session.add(res)
-    await session.commit()
-    await session.refresh(res)
-    return res
+async def add_person(request: Request, session: AsyncSession = Depends(get_session)):
+    req = await request.json()
+    try:
+        Person_validate(req)
+    except ValidationError as e:
+        return  HTTPException(status_code=400, detail="Incorrect values: " + str(e))
+    else:
+        pers = Person(first_name=req['first_name'], 
+                        last_name=req['last_name'], 
+                        birthday=req['birthday'],
+                        address=req['address'])
+        session.add(pers)
+        await session.commit()
+        await session.refresh(pers)
 
+        return pers 
 
 @router.patch("/persons/{person_id}", status_code=200)
 async def update_person(person_id: int, person: PersonUpdate, request: Request,

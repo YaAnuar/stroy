@@ -1,6 +1,6 @@
 from app.routers import AsyncSession, get_session, select, Depends, selectinload, Request, APIRouter
-from app.routers import HTTPException
-from app.models.department import Department, DepartmentCreate, DepartmentUpdate
+from app.routers import HTTPException, ValidationError
+from app.models.department import Department, DepartmentCreate, DepartmentUpdate, Department_validate
 
 
 router = APIRouter(
@@ -25,16 +25,23 @@ async def get_department_by_id(id: int, session: AsyncSession = Depends(get_sess
 
     return departments
 
-@router.post("/departments")
-async def add_department(department: DepartmentCreate, session: AsyncSession = Depends(get_session)):
-    res = Department(name=department.name, 
-                    id_organisation=department.id_organisation, 
-                    description=department.description) 
-    session.add(res)
-    await session.commit()
-    await session.refresh(res)
-    return res
 
+@router.post("/departments/")
+async def add_employee(request: Request, session: AsyncSession = Depends(get_session)):
+    req = await request.json()
+    try:
+        Department_validate(req)
+    except ValidationError as e:
+        return  HTTPException(status_code=400, detail="Incorrect values: " + str(e))
+    else:
+        dep = Department(tab=req['name'], 
+                        id_person=req['id_organisation'], 
+                        id_department=req['description'])
+        session.add(dep)
+        await session.commit()
+        await session.refresh(dep)
+
+        return dep
 
 @router.patch("/departments/{dep_id}")
 async def update_department(empl_id: int, employee: DepartmentUpdate, request: Request,
