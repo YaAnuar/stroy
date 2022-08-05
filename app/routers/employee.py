@@ -35,6 +35,8 @@ async def add_employee(request: Request, session: AsyncSession = Depends(get_ses
         return  HTTPException(status_code=400, detail="Incorrect values: " + str(e))
     else:
         empl = Employee(tab=req['tab'], 
+                        hire_data=req['hire_date'],
+                        dismissal_date=req['dismissal_date'],
                         id_person=req['id_person'], 
                         id_department=req['id_department'])
         session.add(empl)
