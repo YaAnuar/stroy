@@ -55,7 +55,7 @@ async def update_department(dep_id: int, employee: DepartmentUpdate, request: Re
         try:
             Department_validate(req)
         except ValidationError as e:
-            res = await session.execute("UPDATE department SET first_name = '{0}', last_name = '{1}', id_organisation = '{3}', description = '{4}'  WHERE id = {1} CASCADE"
+            res = await session.execute("UPDATE department SET first_name = '{0}', last_name = '{1}', id_organisation = '{3}', description = '{4}'  WHERE id = {1}"
                                                         .format(req['first_name'], req['last_name'], req['id_organisation'], req['description'], dep_id))
             await session.commit()
             return 'OK'
