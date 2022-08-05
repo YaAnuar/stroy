@@ -8,7 +8,7 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-@router.get("/persons", response_model=list[Person])
+@router.get("/get_list_persons", response_model=list[Person])
 async def get_list_persons(session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(Person))
     persons = result.scalars().all()
@@ -16,7 +16,7 @@ async def get_list_persons(session: AsyncSession = Depends(get_session)):
     return persons
 
 
-@router.get("/person_by_id/{id}", response_model=list[Person])
+@router.get("/get_person_by_id/{id}", response_model=list[Person])
 async def get_person_by_id(id: int, session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(Person).where(Person.id == id))
     persons = result.scalars().all()
@@ -24,7 +24,7 @@ async def get_person_by_id(id: int, session: AsyncSession = Depends(get_session)
     return persons
 
 
-@router.post("/persons")
+@router.post("/add_person")
 async def add_person(request: Request, session: AsyncSession = Depends(get_session)):
     req = await request.json()
     try:
@@ -42,7 +42,7 @@ async def add_person(request: Request, session: AsyncSession = Depends(get_sessi
 
         return pers 
 
-@router.patch("/persons/{person_id}", status_code=200)
+@router.patch("/update_person/{person_id}", status_code=200)
 async def update_person(person_id: int, person: PersonUpdate, request: Request,
                                             session: AsyncSession = Depends(get_session)):
     req = await request.json()
@@ -56,7 +56,7 @@ async def update_person(person_id: int, person: PersonUpdate, request: Request,
         return 'OK'
 
 
-@router.delete("/persons/{person_id}")
+@router.delete("/delete_person/{person_id}")
 async def delete_employee(person_id: int, session: AsyncSession = Depends(get_session)):
     await session.execute("DELETE FROM person where id = {}".format(person_id))
     await session.commit()

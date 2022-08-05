@@ -10,14 +10,14 @@ router = APIRouter(
     tags=["employees"]
 )
 
-@router.get("/employees/", response_model=list[EmployeeReadAll])
+@router.get("/get_list_employees/", response_model=list[EmployeeReadAll])
 async def get_list_employees(session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(Employee).options(selectinload('*')))
     empls = result.scalars().all()   
     return empls
 
 
-@router.get("/employee_by_id/{empl_id}", response_model=list[EmployeeReadAll])
+@router.get("/get_employee_by_id/{empl_id}", response_model=list[EmployeeReadAll])
 async def get_employee_by_id(empl_id: int, session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(Employee).where(Employee.id == empl_id).options(selectinload('*')))
     empls = result.scalars().all()
@@ -26,7 +26,7 @@ async def get_employee_by_id(empl_id: int, session: AsyncSession = Depends(get_s
 
 
 
-@router.post("/employees/")
+@router.post("/add_employee/")
 async def add_employee(request: Request, session: AsyncSession = Depends(get_session)):
     req = await request.json()
     try:
@@ -44,7 +44,7 @@ async def add_employee(request: Request, session: AsyncSession = Depends(get_ses
         return empl
 
 
-@router.patch("/employees/{empl_id}")
+@router.patch("/update_employee/{empl_id}")
 async def update_employee(empl_id: int, empl: EmployeeUpdate, request: Request,
                                             session: AsyncSession = Depends(get_session)):
     res = await session.execute(select(Employee))
@@ -61,7 +61,7 @@ async def update_employee(empl_id: int, empl: EmployeeUpdate, request: Request,
 
         return 'OK'
 
-@router.delete("/employees/{empl_id}")
+@router.delete("/delete_employee/{empl_id}")
 async def delete_employee(empl_id: int, session: AsyncSession = Depends(get_session)):
     res = await session.execute(select(Employee).where(Employee.id == empl_id))
     exists = res.scalars().all()

@@ -10,7 +10,7 @@ router = APIRouter(
 )
 
 
-@router.get("/departments", response_model=list[Department])
+@router.get("/get_list_departments", response_model=list[Department])
 async def get_list_departments(session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(Department).options(selectinload('*')))
     departments = result.scalars().all()
@@ -18,7 +18,7 @@ async def get_list_departments(session: AsyncSession = Depends(get_session)):
     return departments
 
 
-@router.get("/department_by_id/{id}", response_model=list[Department])
+@router.get("/get_department_by_id/{id}", response_model=list[Department])
 async def get_department_by_id(id: int, session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(Department).where(Department.id == id).options(selectinload('*')))
     departments = result.scalars().all()
@@ -26,8 +26,8 @@ async def get_department_by_id(id: int, session: AsyncSession = Depends(get_sess
     return departments
 
 
-@router.post("/departments/")
-async def add_employee(request: Request, session: AsyncSession = Depends(get_session)):
+@router.post("/add_department/")
+async def add_department(request: Request, session: AsyncSession = Depends(get_session)):
     req = await request.json()
     try:
         Department_validate(req)
@@ -43,7 +43,7 @@ async def add_employee(request: Request, session: AsyncSession = Depends(get_ses
 
         return dep
 
-@router.patch("/departments/{dep_id}")
+@router.patch("/update_department/{dep_id}")
 async def update_department(empl_id: int, employee: DepartmentUpdate, request: Request,
                                             session: AsyncSession = Depends(get_session)):
     req = await request.json()
@@ -57,7 +57,7 @@ async def update_department(empl_id: int, employee: DepartmentUpdate, request: R
         return 'OK'
 
 
-@router.delete("/departments/{dep_id}")
+@router.delete("/delete_department/{dep_id}")
 async def delete_department(dep_id: int, session: AsyncSession = Depends(get_session)):
     res = await session.execute("DELETE FROM department where id = {}".format(dep_id))
     await session.commit()
