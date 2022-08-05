@@ -46,8 +46,8 @@ async def add_person(request: Request, session: AsyncSession = Depends(get_sessi
         return pers 
 
 
-@router.patch("/update_person/{person_id}")
-async def update_department(person_id: int, person: PersonUpdate, request: Request,
+@router.patch("/update_person_by_id/{person_id}")
+async def update_person_by_id(person_id: int, person: PersonUpdate, request: Request,
                                             session: AsyncSession = Depends(get_session)):
     req = await request.json()
     res = await session.execute(select(Person).where(Person.id == person_id))

@@ -46,8 +46,8 @@ async def add_department(request: Request, session: AsyncSession = Depends(get_s
 
         return dep
 
-@router.patch("/update_department/{dep_id}")
-async def update_department(dep_id: int, request: Request,
+@router.patch("/update_department_by_id/{dep_id}")
+async def update_department_by_id(dep_id: int, request: Request,
                                             session: AsyncSession = Depends(get_session)):
     req = await request.json()
     res = await session.execute(select(Department).where(Department.id == dep_id))
