@@ -27,7 +27,10 @@ async def get_employee_by_id(empl_id: int, session: AsyncSession = Depends(get_s
 async def add_employee(request: Request, session: AsyncSession = Depends(get_session)):
     req = await request.json()
     try:
-        Employee_validate(req)
+        if {'tab', 'hire_date', 'dismissal_date', 'id_person', 'id_department'} <= set(req):
+            Employee_validate(req)
+        else:
+            return  HTTPException(status_code=400, detail="Missed request value.")
     except ValidationError as e:
         return  HTTPException(status_code=400, detail="Incorrect values: " + str(e))
     else:
