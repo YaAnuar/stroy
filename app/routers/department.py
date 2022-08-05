@@ -44,10 +44,11 @@ async def add_department(request: Request, session: AsyncSession = Depends(get_s
         return dep
 
 @router.patch("/update_department/{dep_id}")
-async def update_department(empl_id: int, employee: DepartmentUpdate, request: Request,
+async def update_department(dep_id: int, employee: DepartmentUpdate, request: Request,
                                             session: AsyncSession = Depends(get_session)):
     req = await request.json()
-    exists = await session.execute(select(Department).where(Department.id == empl_id))
+    res = await session.execute(select(Department).where(Department.id == dep_id))
+    exists = res.scalars().all()
     if not exists:
         raise HTTPException(status_code=404, detail="Employee not found")
     else:
