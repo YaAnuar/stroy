@@ -1,0 +1,14 @@
+alembic==1.8.1
+aniso8601==9.0.1
+async-timeout==4.0.2
+asyncpg==0.26.0
+fastapi==0.79.0
+psycopg2-binary==2.9.3
+pydantic==1.9.1
+redis==4.3.4
+SQLAlchemy==1.4.35
+sqlalchemy2-stubs==0.0.2a24
+sqlalchemy_database==0.0.4
+sqlmodel==0.0.6
+typing_extensions==4.3.0
+uvicorn==0.18.2

@@ -1,5 +1,3 @@
-from lib2to3.pgen2.token import NUMBER
-import string
 from app.models import Optional, SQLModel, Field, Relationship
 from app.models import date
 from app.models.department import Department
