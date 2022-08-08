@@ -22,4 +22,3 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=orders
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@host.docker.internal:5432/orders 
