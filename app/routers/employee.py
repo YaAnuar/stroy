@@ -39,7 +39,7 @@ async def create_employee(empolyee: EmployeeCreate, session: AsyncSession = Depe
 
 
 @router.patch("/update_employee/{empl_id}", response_model=Employee)
-async def update_employee_by_id(empl_id: int, empolyee: EmployeeUpdate, session: AsyncSession = Depends(get_session)):
+async def update_employee(empl_id: int, empolyee: EmployeeUpdate, session: AsyncSession = Depends(get_session)):
     res = await session.execute(select(Employee).where(Employee.id == empl_id))
     exists = res.scalars().all()
     if not exists:
