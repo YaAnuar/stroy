@@ -18,10 +18,10 @@ async def get_list_departments(session: AsyncSession = Depends(get_session)):
     return department
 
 
-@router.get("/get_department_by_id/{id}", response_model=list[Department])
+@router.get("/get_department_by_id/{id}", response_model=Department)
 async def get_department_by_id(id: int, session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(Department).where(Department.id == id).options(selectinload('*')))
-    departments = result.scalars().all()
+    departments = result.scalars().one()
 
     return departments
 
