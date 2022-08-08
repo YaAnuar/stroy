@@ -31,7 +31,7 @@ async def create_department(department: DepartmentCreate, session: AsyncSession 
     exists = await session.execute(select(Department).where( Department.id_organisation == department.id_organisation ))
     exists = exists.scalars().all()
     if exists:
-        return HTTPException(status_code=409, detail="Department already exists")
+        raise HTTPException(status_code=409, detail="Department already exists")
     else:
         dep = Department(name=department.name, 
                         id_organisation=department.id_organisation, 

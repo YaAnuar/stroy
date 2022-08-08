@@ -56,12 +56,7 @@ async def update_employee_by_id(empl_id: int, empolyee: EmployeeUpdate, session:
 
 @router.delete("/delete_employee/{empl_id}")
 async def delete_employee(empl_id: int, session: AsyncSession = Depends(get_session)):
-    res = await session.execute(select(Employee).where(Employee.id == empl_id))
-    exists = res.scalars().all()
-    if not exists:
-        raise HTTPException(status_code=404, detail="Employee not found")
-    else:
-        await session.execute("DELETE FROM employee where id = {}".format(empl_id))
-        await session.commit()
-        
-        return 'OK'
+    await session.execute("DELETE FROM employee where id = {}".format(empl_id))
+    await session.commit()
+    
+    return 'OK'
