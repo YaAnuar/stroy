@@ -52,4 +52,9 @@ async def update_person_by_id(person_id: int, person: PersonUpdate, session: Asy
 
 @router.delete("/delete_person/{person_id}")
 async def delete_person(person_id: int, session: AsyncSession = Depends(get_session)):
-    await session.execute("DELETE FROM person where id = {}".format(person_id))
+    person = await session.get(Person, person_id)
+    if not person:
+        raise HTTPException(status_code=404, detail="Person not found")
+    session.delete(person)
+    session.commit()
+    return {"ok": True}

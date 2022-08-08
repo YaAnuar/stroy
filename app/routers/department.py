@@ -55,7 +55,9 @@ async def update_department(dep_id: int, department: DepartmentUpdate, session: 
 
 @router.delete("/delete_department/{dep_id}")
 async def delete_department(dep_id: int, session: AsyncSession = Depends(get_session)):
-    res = await session.execute("DELETE FROM department where id = {}".format(dep_id))
-    await session.commit()
-    return 'OK'
-
+    department = await session.get(Department, dep_id)
+    if not department:
+        raise HTTPException(status_code=404, detail="Department not found")
+    session.delete(department)
+    session.commit()
+    return {"ok": True}
