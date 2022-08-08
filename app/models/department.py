@@ -6,7 +6,7 @@ from pydantic import validator
 
 class DepartmentBase(SQLModel):
     name: str
-    id_organisation: int = Field(sa_column=Column("id_organisation", Integer, unique=True))
+    id_organisation: int = Field(sa_column=Column("id_organisation", Integer))
     description: Optional[str]
 
 
