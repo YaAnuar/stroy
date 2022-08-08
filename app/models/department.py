@@ -1,10 +1,7 @@
+from wsgiref import validate
 from app.models import Optional, SQLModel, Field, Relationship
 from app.models import Column, List, Integer
-
-
-def Department_validate(req):
-    return DepartmentBase.validate({"name": req['name'], "id_organisation": req['id_organisation'], 
-                                    "description": req['description']})
+from pydantic import validator
 
 
 class DepartmentBase(SQLModel):
@@ -24,5 +21,5 @@ class DepartmentCreate(DepartmentBase):
 
 class DepartmentUpdate(SQLModel):
     name: str = None
-    id_organisation: int = None
+    id_organisation: Optional[int] = None
     description: Optional[str] = None

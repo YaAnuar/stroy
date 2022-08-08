@@ -13,7 +13,7 @@ def Employee_validate(req):
 class EmployeeBase(SQLModel):
     id_person: Optional[int] = Field(default=None, foreign_key="person.id")
     id_department: Optional[int] = Field(default=None, foreign_key="department.id")
-    tab: int
+    tab: Optional[int]
     hire_date: Optional[date]
     dismissal_date: Optional[date]
 
@@ -32,12 +32,8 @@ class EmployeeRead(EmployeeBase):
     id: int
 
 
-class EmployeeUpdate(SQLModel):
-    tab: Optional[int] = None
-    hire_date: Optional[date] = None
-    dismissal_date: Optional[date] = None
-    id_person: Optional[int] = None
-    id_department: Optional[int] = None
+class EmployeeUpdate(EmployeeBase):
+    pass
 
 class EmployeeReadAll(EmployeeRead):
     department: Optional[Department] = None

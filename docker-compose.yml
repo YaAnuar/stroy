@@ -1,21 +1,11 @@
 version: '3.8'
 
 services:
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - 8080:8080
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB} 
-    depends_on:
-      - db
-    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8080
   db:
+    hostname: postgres
+    restart: always
     container_name: pg_container
     image: postgres:14.4-alpine
-    restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -35,3 +25,19 @@ services:
       - "5050:8080"
     env_file:
         - .env
+  api:
+    restart: always
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080 
+    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8080
+    networks:
+      - default
+    links:
+        - db
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}
