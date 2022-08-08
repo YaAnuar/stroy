@@ -28,19 +28,14 @@ async def get_department_by_id(id: int, session: AsyncSession = Depends(get_sess
 
 @router.post("/create_department/", response_model=Department)
 async def create_department(department: DepartmentCreate, session: AsyncSession = Depends(get_session)):
-    exists = await session.execute(select(Department).where( Department.id_organisation == department.id_organisation ))
-    exists = exists.scalars().all()
-    if exists:
-        raise HTTPException(status_code=409, detail="Department already exists")
-    else:
-        dep = Department(name=department.name, 
-                        id_organisation=department.id_organisation, 
-                        description=department.description)
-        session.add(dep)
-        await session.commit()
-        await session.refresh(dep)
+    dep = Department(name=department.name, 
+                    id_organisation=department.id_organisation, 
+                    description=department.description)
+    session.add(dep)
+    await session.commit()
+    await session.refresh(dep)
 
-        return dep
+    return dep
 
 @router.patch("/update_department/{dep_id}", response_model=Department, status_code=200)
 async def update_department(dep_id: int, department: DepartmentUpdate, session: AsyncSession = Depends(get_session)):
