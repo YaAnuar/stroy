@@ -25,3 +25,7 @@ class PersonCreate(PersonBase):
 
 class PersonUpdate(SQLModel):
     address: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    birthday: Optional[date] = None
+    address: Optional[str] = None

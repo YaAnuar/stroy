@@ -37,17 +37,18 @@ async def create_department(department: DepartmentCreate, session: AsyncSession 
 
     return dep
 
-@router.patch("/update_department/{dep_id}", response_model=Department, status_code=200)
+
+@router.patch("/update_department/{dep_id}", response_model=DepartmentUpdate, status_code=200)
 async def update_department(dep_id: int, department: DepartmentUpdate, session: AsyncSession = Depends(get_session)):
     exists = await session.execute(select(Department).where( Department.id == dep_id ))
     exists = exists.scalars().all()
     if not exists:
         raise HTTPException(status_code=404, detail="Department not found")
     else:
-        await session.execute("UPDATE department SET name = '{0}', id_organisation = '{1}', "
-                                                    "description = '{2}'  WHERE id = {3}"
-                                                    .format(department.name, department.id_organisation, 
-                                                    department.description, dep_id))
+        res = await session.get(Department, dep_id)
+        department_data = department.dict(exclude_unset=True)
+        for key, value in department_data.items():
+            setattr(res, key, value)
         await session.commit()
         return department
 

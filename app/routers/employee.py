@@ -45,13 +45,11 @@ async def update_employee_by_id(empl_id: int, empolyee: EmployeeUpdate, session:
     if not exists:
         raise HTTPException(status_code=404, detail="Employee not found")
     else:
-        await session.execute("UPDATE employee SET tab = '{0}', hire_date = '{1}', dismissal_date = '{2}',"
-                                            "id_person = '{3}', id_department = '{4}'"
-                                            " WHERE id = {5}"
-                                                .format(empolyee.tab, empolyee.hire_date, empolyee.dismissal_date, 
-                                            empolyee.id_person, empolyee.id_department, empl_id))
+        res = await session.get(Employee, empl_id)
+        empolyee_data = empolyee.dict(exclude_unset=True)
+        for key, value in empolyee_data.items():
+            setattr(res, key, value)
         await session.commit()
-
         return empolyee
 
 @router.delete("/delete_employee/{empl_id}")

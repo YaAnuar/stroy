@@ -37,9 +37,8 @@ async def create_person(person: PersonCreate, session: AsyncSession = Depends(ge
     return pers 
 
 
-@router.patch("/update_person/{person_id}", response_model=Person)
-async def update_person_by_id(person_id: int, person: PersonUpdate, request: Request,
-                                            session: AsyncSession = Depends(get_session)):
+@router.patch("/update_person/{person_id}", response_model=PersonUpdate)
+async def update_person_by_id(person_id: int, person: PersonUpdate, session: AsyncSession = Depends(get_session)):
     res = await session.get(Person, person_id)
     if not res:
         raise HTTPException(status_code=404, detail="Person not found")
@@ -54,6 +53,3 @@ async def update_person_by_id(person_id: int, person: PersonUpdate, request: Req
 @router.delete("/delete_person/{person_id}")
 async def delete_person(person_id: int, session: AsyncSession = Depends(get_session)):
     await session.execute("DELETE FROM person where id = {}".format(person_id))
-    await session.commit()
-    return 'OK'
-
