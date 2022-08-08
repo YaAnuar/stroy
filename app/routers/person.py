@@ -40,14 +40,14 @@ async def create_person(person: PersonCreate, session: AsyncSession = Depends(ge
 @router.patch("/update_person/{person_id}", response_model=Person)
 async def update_person_by_id(person_id: int, person: PersonUpdate, request: Request,
                                             session: AsyncSession = Depends(get_session)):
-    req = await request.json()
-    res = await session.execute(select(Person).where(Person.id == person.id))
+    res = await session.execute(select(Person).where(Person.id == person_id))
     exists = res.scalars().all()
     if not exists:
         raise HTTPException(status_code=404, detail="Person not found")
     else:
-        await session.execute("UPDATE person SET first_name = '{0}', last_name = '{1}', birthday = '{2}', address = '{3}'  WHERE id = {4}"
-                                                    .format(person.first_name, person.last_name, person.birthday, person.address, person_id))
+        person_data = person.dict(exclude_unset=True)
+        for key, value in hero_data.items():
+            setattr(db_hero, key, value)
         await session.commit()
         return person
 
