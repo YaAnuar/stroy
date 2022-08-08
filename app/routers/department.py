@@ -38,7 +38,7 @@ async def add_department(request: Request, session: AsyncSession = Depends(get_s
         return  HTTPException(status_code=400, detail="Incorrect values: " + str(e))
     else:
         exists = await session.execute(select(Department).where( Department.id_organisation == req['id_organisation'] ))
-        if exists.scalars().all():
+        if exists.scalars().one():
             return HTTPException(status_code=409, detail="Department already exists")
         else:
             dep = Department(name=req['name'], 
