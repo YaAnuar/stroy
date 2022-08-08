@@ -12,7 +12,7 @@ router = APIRouter(
 
 @router.get("/get_list_departments", response_model=list[Department])
 async def get_list_departments(session: AsyncSession = Depends(get_session)):
-    result = await session.execute(select(Department).options(selectinload('*')))
+    result = await session.execute(select(Department.offset(6).limit(3)).options(selectinload('*')))
     department = result.scalars().all()
 
     return department

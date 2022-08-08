@@ -6,4 +6,4 @@ postgres_data/
 pgadmin/
 
 #Virtual enviroment
-.venv/
+venv/
