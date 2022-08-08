@@ -53,7 +53,7 @@ async def update_person_by_id(person_id: int, person: PersonUpdate, request: Req
     res = await session.execute(select(Person).where(Person.id == person_id))
     exists = res.scalars().all()
     if not exists:
-        raise HTTPException(status_code=404, detail="Employee not found")
+        raise HTTPException(status_code=404, detail="Person not found")
     else:
         try:
             if {'first_name', 'last_name', 'birthday', 'address'} <= set(req):
