@@ -37,14 +37,19 @@ async def add_department(request: Request, session: AsyncSession = Depends(get_s
     except ValidationError as e:
         return  HTTPException(status_code=400, detail="Incorrect values: " + str(e))
     else:
-        dep = Department(name=req['name'], 
-                        id_organisation=req['id_organisation'], 
-                        description=req['description'])
-        session.add(dep)
-        await session.commit()
-        await session.refresh(dep)
+        exists = await session.execute(select(Department).where( Department.id_organisation == req['id_organisation'] ))
+        exists = exists.scalars().all()
+        if exists:
+            return HTTPException(status_code=409, detail="Department already exists")
+        else:
+            dep = Department(name=req['name'], 
+                            id_organisation=req['id_organisation'], 
+                            description=req['description'])
+            session.add(dep)
+            await session.commit()
+            await session.refresh(dep)
 
-        return dep
+            return dep
 
 @router.patch("/update_department/{dep_id}")
 async def update_department(dep_id: int, request: Request,
