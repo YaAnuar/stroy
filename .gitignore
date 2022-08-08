@@ -1,0 +1,9 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# db data
+postgres_data/
+pgadmin/
+
+#Virtual enviroment
+.venv/
