@@ -13,9 +13,9 @@ router = APIRouter(
 @router.get("/get_list_departments", response_model=list[Department])
 async def get_list_departments(session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(Department).options(selectinload('*')))
-    departments = result.scalars().all()
+    department = result.scalars().one()
 
-    return departments
+    return department
 
 
 @router.get("/get_department_by_id/{id}", response_model=list[Department])
@@ -37,14 +37,18 @@ async def add_department(request: Request, session: AsyncSession = Depends(get_s
     except ValidationError as e:
         return  HTTPException(status_code=400, detail="Incorrect values: " + str(e))
     else:
-        dep = Department(name=req['name'], 
-                        id_person=req['id_organisation'], 
-                        id_department=req['description'])
-        session.add(dep)
-        await session.commit()
-        await session.refresh(dep)
+        exists = await session.execute(select(Department).where( Department.id_organisation == req['id_organisation'] ))
+        if exists.scalars().all():
+            return HTTPException(status_code=409, detail="Department already exists")
+        else:
+            dep = Department(name=req['name'], 
+                            id_organisation=req['id_organisation'], 
+                            description=req['description'])
+            session.add(dep)
+            await session.commit()
+            await session.refresh(dep)
 
-        return dep
+            return dep
 
 @router.patch("/update_department/{dep_id}")
 async def update_department(dep_id: int, request: Request,
@@ -53,7 +57,7 @@ async def update_department(dep_id: int, request: Request,
     res = await session.execute(select(Department).where(Department.id == dep_id))
     exists = res.scalars().all()
     if not exists:
-        raise HTTPException(status_code=404, detail="Employee not found")
+        raise HTTPException(status_code=404, detail="Department not found")
     else:
         try:
             if {'name', 'id_organisation', 'description'} <= set(req):

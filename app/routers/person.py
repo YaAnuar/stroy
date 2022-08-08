@@ -16,12 +16,12 @@ async def get_list_persons(session: AsyncSession = Depends(get_session)):
     return persons
 
 
-@router.get("/get_person_by_id/{id}", response_model=list[Person])
+@router.get("/get_person_by_id/{id}", response_model=Person)
 async def get_person_by_id(id: int, session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(Person).where(Person.id == id))
-    persons = result.scalars().all()
+    person = result.scalars().one()
 
-    return persons
+    return person
 
 
 @router.post("/add_person")
