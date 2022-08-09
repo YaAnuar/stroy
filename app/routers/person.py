@@ -1,5 +1,5 @@
 from app.routers import AsyncSession, get_session, select, Depends, selectinload, Request, APIRouter, HTTPException
-from app.models.person import Person, PersonCreate, PersonUpdate, Person_validate
+from app.models.person import Person, PersonCreate, PersonUpdate
 from app.routers import HTTPException
 
 router = APIRouter(
@@ -26,15 +26,13 @@ async def get_person_by_id(id: int, session: AsyncSession = Depends(get_session)
 
 @router.post("/create_person", response_model=Person)
 async def create_person(person: PersonCreate, session: AsyncSession = Depends(get_session)):
-    pers = Person(first_name=person.first_name, 
-                    last_name=person.last_name, 
-                    birthday=person.birthday,
-                    address=person.address)
-    session.add(pers)
+    person_dict = person.dict()
+    person = Person(**person_dict)
+    session.add(person)
     await session.commit()
-    await session.refresh(pers)
+    await session.refresh(person)
 
-    return pers 
+    return person 
 
 
 @router.patch("/update_person/{person_id}", response_model=PersonUpdate)
@@ -55,6 +53,6 @@ async def delete_person(person_id: int, session: AsyncSession = Depends(get_sess
     person = await session.get(Person, person_id)
     if not person:
         raise HTTPException(status_code=404, detail="Person not found")
-    session.delete(person)
-    session.commit()
+    await session.delete(person)
+    await session.commit()
     return {"ok": True}

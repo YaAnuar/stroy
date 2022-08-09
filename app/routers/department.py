@@ -2,7 +2,6 @@ from app.routers import AsyncSession, get_session, select, Depends, selectinload
 from app.routers import HTTPException
 from app.models.department import Department, DepartmentCreate, DepartmentUpdate
 
-
 router = APIRouter(
     prefix="/api",
     tags=["departments"],
@@ -12,7 +11,7 @@ router = APIRouter(
 
 @router.get("/get_list_departments", response_model=list[Department])
 async def get_list_departments(session: AsyncSession = Depends(get_session)):
-    result = await session.execute(select(Department.offset(6).limit(3)).options(selectinload('*')))
+    result = await session.execute(select(Department).options(selectinload('*')))
     department = result.scalars().all()
 
     return department
@@ -28,14 +27,13 @@ async def get_department_by_id(id: int, session: AsyncSession = Depends(get_sess
 
 @router.post("/create_department/", response_model=Department)
 async def create_department(department: DepartmentCreate, session: AsyncSession = Depends(get_session)):
-    dep = Department(name=department.name, 
-                    id_organisation=department.id_organisation, 
-                    description=department.description)
-    session.add(dep)
+    department_dict = department.dict()
+    department = Department(**department_dict)
+    session.add(department)
     await session.commit()
-    await session.refresh(dep)
+    await session.refresh(department)
 
-    return dep
+    return department
 
 
 @router.patch("/update_department/{dep_id}", response_model=DepartmentUpdate, status_code=200)
@@ -58,6 +56,6 @@ async def delete_department(dep_id: int, session: AsyncSession = Depends(get_ses
     department = await session.get(Department, dep_id)
     if not department:
         raise HTTPException(status_code=404, detail="Department not found")
-    session.delete(department)
-    session.commit()
+    await session.delete(department)
+    await session.commit()
     return {"ok": True}
